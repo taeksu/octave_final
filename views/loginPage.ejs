@@ -1,0 +1,58 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta charset="utf-8">	
+	<title>loginPgae</title>
+	
+	<link rel='stylesheet' href='/stylesheets/sweetalert.css'/>
+	<link rel='stylesheet' href='/stylesheets/jquery-ui.css'/>
+	<link rel='stylesheet' href='/stylesheets/login-style.css'/>
+
+    <script src="http://cdn.tinymce.com/4/tinymce.min.js"></script> 	
+	<script src="./javascripts/lib/sweet-alert.js"></script>
+	
+	<script src='http://code.jquery.com/jquery-latest.js'></script>
+	<script src="http://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+	<script src="http://layout.jquery-dev.com/lib/js/jquery.layout-latest.js"></script>
+	
+	
+	<script type="text/javascript">
+
+		var massage = "<%=alert%>";
+		
+		if(massage != ''){
+			sweetAlert("Oops...", massage, "error");
+		}
+		
+	</script>
+<body>
+
+<div class="login">
+		<div class="login-screen">
+			<div class="app-title">
+				
+			
+			<img src="/images/logo.png" alt="Smiley face" height="42" width="42">
+			<h1>Login</h1>
+			</div>
+<form method="post"action="/mainPage">
+			<div class="login-form">
+				<div class="control-group">
+				<input type="text" class="login-field" value="" placeholder="username" id="userID" name="userId">
+				<label class="login-field-icon fui-user" for="login-name"></label>
+				</div>
+
+				<div class="control-group">
+				<input type="password" class="login-field" value="" placeholder="password" id="password" name="password">
+				<label class="login-field-icon fui-lock" for="login-pass"></label>
+				</div>
+				<input class="btn btn-primary btn-large btn-block" type="submit" value="login"/>
+			</div>
+		</form>		
+		</div>
+	
+	</div>    
+
+
+</body>
+</html>

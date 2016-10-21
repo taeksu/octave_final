@@ -1,0 +1,1176 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta charset="utf-8">	
+	<title>octav ui</title>
+	
+	<link rel='stylesheet' href='/stylesheets/sweetalert.css'/>
+	<link rel='stylesheet' href='/stylesheets/style.css'/>
+	<link rel='stylesheet' href='/stylesheets/jquery-ui.css'/>
+
+    <script src="http://cdn.tinymce.com/4/tinymce.min.js"></script> 	
+	<script src="./javascripts/dist/sweetalert-dev.js"></script>
+	
+	<script src='http://code.jquery.com/jquery-latest.js'></script>
+	<script src="http://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+	<script src="http://layout.jquery-dev.com/lib/js/jquery.layout-latest.js"></script>
+	
+	<script src="http://layout.jquery-dev.com/lib/js/jquery.layout-latest.js"></script>
+ 	<script src="http://layout.jquery-dev.com/lib/js/jquery.layout.resizeTabLayout-1.3.js"></script>
+	<script src="http://layout.jquery-dev.com/lib/js/jquery.layout.resizePaneAccordions-1.2.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>	
+	
+	<script type="text/javascript">
+
+	function toggleCustomTheme () {
+		$('body').toggleClass('custom');
+		resizePageLayout();
+	};
+
+	function resizePageLayout () {
+		var pageLayout = $("body").data("layout");
+		if (pageLayout) pageLayout.resizeAll();
+	};
+
+	var pageLayoutOptions = {
+		name:					'pageLayout' // only for debugging
+	,	resizeWithWindowDelay:	250		// delay calling resizeAll when window is *still* resizing
+	,	resizable:				false
+	,	slidable:				false
+	,	closable:				false
+	,	north__paneSelector:	"#outer-north"
+	,	center__paneSelector:	"#outer-center" 
+	,	south__paneSelector:	"#outer-south" 
+	,	south__spacing_open:	0
+	,	north__spacing_open:	0
+	
+	,	center__children: {
+			name:					'tabsContainerLayout'
+		,	resizable:				false
+		,	slidable:				false
+		,	closable:				false
+		,	north__paneSelector:	"#tabbuttons"
+		,	center__paneSelector:	"#tabpanels" 
+		,	spacing_open:			0
+		,	center__onresize:		$.layout.callbacks.resizeTabLayout // resize ALL visible layouts nested inside
+		}
+	};
+
+
+	var sidebarLayoutOptions = {
+		name:					'sidebarLayout' // only for debugging
+	,	showErrorMessages:		false	// some panes do not have an inner layout
+	,	resizeWhileDragging:	true
+	,   north__size:			"45%"
+	,   south__size:			"30%"
+	,	minSize:				100
+	,	center__minHeight:		100
+	,	spacing_open:			10
+	,	spacing_closed:			10
+	,	contentSelector:		".ui-widget-content"
+	,	togglerContent_open:	'<div class="ui-icon"></div>'
+	,	togglerContent_closed:	'<div class="ui-icon"></div>'
+	};
+
+
+	var tabLayoutOptions = {
+
+		resizeWithWindow:		false	// required because layout is 'nested' inside tabpanels container
+
+	,	resizerDragOpacity:		0.5
+	,	north__resizable:		false
+	,	south__resizable:		false
+	,	north__closable:		false
+	,	south__closable:		false
+	,	west__minSize:			300
+	,	east__minSize:			200
+	,	center__minWidth:		400
+	,	spacing_open:			10
+	,	spacing_closed:			10
+	,	contentSelector:		".ui-widget-content"
+	,	togglerContent_open:	'<div class="ui-icon"></div>'
+	,	togglerContent_closed:	'<div class="ui-icon"></div>'
+	,	triggerEventsOnLoad:	true // so center__onresize is triggered when layout inits
+	,	center__onresize:		$.layout.callbacks.resizePaneAccordions // resize ALL Accordions nested inside
+	,	west__onresize:			$.layout.callbacks.resizePaneAccordions // ditto for west-pane
+	,	west__children:		sidebarLayoutOptions
+	,	east__children:		sidebarLayoutOptions
+	};
+
+
+	$(document).ready( function() {
+
+		toggleCustomTheme ();
+		var pageLayout = $("body").layout( pageLayoutOptions ); 
+
+		pageLayout.center.pane
+			.tabs({
+	
+				activate: $.layout.callbacks.resizeTabLayout
+
+			})
+			// make the tabs sortable
+			.find(".ui-tabs-nav") .sortable({ axis: 'x', zIndex: 2 }) .end()
+		;
+
+		pageLayout.center.children.tabsContainerLayout.resizeAll();
+
+//		$("#tab1").layout( tabLayoutOptions );
+//		$("#tab2").layout( tabLayoutOptions );
+		$("#tab3").layout( tabLayoutOptions );
+		
+		$("#innerTabs").tabs({
+
+			activate: $.layout.callbacks.resizePaneAccordions
+		});
+
+		$(".accordion").accordion({ heightStyle: "fill" });
+	
+
+	});
+
+	
+	function htmledit(excute,values)
+			{
+				if(values==null)
+				{
+						dhtmlframe.document.execCommand(excute);
+				}
+				else
+				{
+						dhtmlframe.document.execCommand(excute,"",values);
+				}
+			}
+	function datasubmit()
+			{
+				form.comment.value = dhtmlframe.document.body.innerHTML;
+				var params = jQuery("#formname1").serialize(); // serialize() : 입력된 모든Element(을)를 문자열의 데이터에 serialize 한다.
+						jQuery.ajax({
+							url: '',
+							type: 'POST',
+							data:params,
+							contentType: 'application/x-www-form-urlencoded; charset=UTF-8', 
+							dataType: 'html',
+							success: function (result) {
+								if (result){
+									// 데이타 성공일때 이벤트 작성
+								}
+							}
+						});
+
+					}	
+
+	function logout(){
+	
+		swal({
+			title: "Are you sure?"
+			,   text: "log out!"
+			,   type: "warning"
+			,   showCancelButton: true
+			,   confirmButtonColor: "#DD6B55"
+			,   confirmButtonText: "Yes, it is!"
+			,   closeOnConfirm: false }
+			,	function(){ 
+				<!-- swal("success!", "log out success.", "success");  --> 
+				location.href="/logout";
+			});
+			
+	}
+
+</script> 
+	<style>
+ 
+	textarea#cmd_board {
+		height:100%;
+		width:100%;
+		display:block;
+		max-width:100%;
+		line-height:1.5;
+		<!-- padding:15px 15px 30px; -->
+		border-radius:3px;
+		border:1px solid  #b3e0ff;
+		font:13px Tahoma, cursive;
+		transition:box-shadow 0.5s ease;
+		box-shadow:0 4px 6px rgba(0,0,0,0.1);
+		font-smoothing:subpixel-antialiased;
+		background:-o-linear-gradient(#e6f5ff,  #b3e0ff);
+		background:-ms-linear-gradient(#e6f5ff,  #b3e0ff);
+		background:-moz-linear-gradient(#e6f5ff,  #b3e0ff);
+		background:-webkit-linear-gradient(#e6f5ff,  #b3e0ff);
+		background:linear-gradient(#e6f5ff,  #b3e0ff);
+	}
+	
+	textarea.tabArea {
+	
+		height:100%;
+		width:100%;
+		display:block;
+		max-width:100%;
+		line-height:1.5;
+		<!-- padding:15px 15px 30px; -->
+		border-radius:3px;
+		border:1px solid  #b3e0ff;
+		font:13px Tahoma, cursive;
+		transition:box-shadow 0.5s ease;
+		box-shadow:0 4px 6px rgba(0,0,0,0.1);
+		font-smoothing:subpixel-antialiased;
+		background:-o-linear-gradient(#e6ffff,  #b3edff);
+		background:-ms-linear-gradient(#e6ffff,  #b3edff);
+		background:-moz-linear-gradient(#e6ffff,  #b3edff);
+		background:-webkit-linear-gradient(#e6ffff,  #b3edff);
+		background:linear-gradient(#e6ffff,  #b3edff);
+	}
+	
+	
+	</style>
+</head> 
+<body class="custom"> 
+
+<div id="outer-north">
+	<div class="buttons hidden">
+		<button onClick="toggleCustomTheme()">Toggle Custom Theme</button>
+		<button onClick="removeUITheme(); resizePageLayout()">Remove UI Theme</button>
+		<button onClick="resizePageLayout()">Resize Layout</button>
+	</div>
+	
+</div>
+
+<div id="page-loading">Loading...</div>
+
+<div id="outer-south" class="hidden"></div>
+
+<div id="outer-center" class="hidden">
+
+	<UL id="tabbuttons" class="hidden">
+		<LI class="tab3 hidden"><a href="#tab3">Outer Tab Three</a></LI>
+	</UL>
+
+	<div id="tabpanels">
+
+		<div id="tab3" class="tab-panel hidden">
+			<div class="ui-layout-north ui-widget">
+				<div class="toolbar ui-widget-content ui-state-active">
+					<div style="float:right">
+						<!-- <button class="ui-button ui-widget ui-corner-all" id="logoutbtn" onclick="logout();" >logOut</button> -->
+						<span class="ui-icon ui-icon-power"  onclick="logout();"></span>
+					</div>
+				</div>
+				
+				
+			</div>
+			<div class="ui-layout-south ui-widget">
+				<div class="toolbar ui-widget-content ui-state-default">
+					
+				</div>
+			</div>
+			<div id="innerTabs" class="ui-layout-center container tabs">
+				<!-- <div class="ui-widget-header ui-corner-top"> Center -Center </div> -->
+				<UL>
+					<LI class="tab1"><a href="#simpleTab1">command Window</a></LI>
+					<LI class="tab3"><a href="#simpleTab2">Editor</a></LI>
+					<!-- <LI class="tab2"><a href="#simpleTab3">EditorTest</a></LI> -->
+					
+				</UL>
+				<div class="ui-widget-content" style="border-top: 0;">
+				
+				<div id="simpleTab1" style="height: 95%;"> 
+							
+						<div id="rightBox" class="">
+							
+						 <input type="text" id="cmd_msg" style=""/>
+							<br><br>
+							<div class="" style="height: 80%; width:100%;"> 
+								<textarea disabled="disabled"  id="cmd_board"  class="mce-tinymce mce-panel"></textarea>
+							</div>
+							
+						</div>
+						
+						<script>	
+
+						
+						var ajaxUrl = 'http://210.110.236.28:3303';
+	
+						$("#cmd_msg").keypress(function(e) { 
+							
+							if (e.keyCode == 13){	
+							
+							var msg = $('#cmd_msg').val();
+							var date  = new Date();
+							var year  = date.getFullYear();
+							var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+							var day   = date.getDate();							  
+							var time  = date.toLocaleTimeString();
+
+					          $.ajax({
+					              url: ajaxUrl+'/ajax',
+					              dataType: 'json',
+					              type: 'POST',
+					              data: {'msg':msg,
+										 'diary':'diary on',
+										  'off':'diary off',
+										  'sucessId':'<%= sucessId%>',
+										  'time':year+'-'+month+'-'+day
+										 },
+										
+										
+					              		success: function(result) {
+												
+									           $.ajax({
+									              url: ajaxUrl+'/diary1',
+									              dataType: 'json',
+									              type: 'POST',
+									              success: function(result) {
+	
+														var fWriter = result['fWriter'];
+														
+														
+														 $.ajax({
+												              url: ajaxUrl + '/diary2',
+												              dataType: 'json',
+												              type: 'POST',
+												              success: function(result) {	
+																	
+																	
+																	var fWriter = result['fWriter'];
+																	fWriter = fWriter.replace(/ diary off/gi,"");
+																	fWriter = fWriter.replace(/octave-cli:/gi,"");
+																	fWriter = fWriter.replace(/[1-9][0-9][0-9][0-9]>|[1-9][0-9][0-9]>|[1-9][0-9]>|[0-9]>/gi,"");
+																	
+																	fWriter = fWriter.replace(msg,"");
+																	var arrayfWriter = fWriter.split(" ");
+													
+																	if(msg != ""){
+																		$('#cmd_board').scrollTop(0);
+																		$('#cmd_board').append(fWriter);	
+																		$('#workSpaceTable').append('<tr><td>'+arrayfWriter[1]+'</td><td>double</td><td></td><td>'+arrayfWriter[4]+'</td></tr>');
+																		$('#commandHistoryTable').append('<tr><td class="historyTd">'+msg+'</td><td style="float:right">' + year+'-'+month+'-'+day + '</td></tr>');
+																		//scrolling
+																		$('#commandHistoryDiv').scrollTop(0);
+																		
+																		$('#commandHistoryDiv').scrollTop($(".historyTd:last").offset().top);
+																		
+																		$('#cmd_board').scrollTop($('#cmd_board')[0].scrollHeight);
+																		
+																		
+																		<!-- hsClick(); -->
+																		hsHober();
+																		
+																	}else{
+																	
+																		$("#cmd_board").append(">> \n");
+																	}
+												              	}
+												
+															});													
+	
+									              	},
+													error:function(request,status,error){
+													alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+													}
+									
+												});
+												
+										
+										},error:function(request,status,error){
+													alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+												}
+												
+					          	});
+					
+							};
+							
+					      });
+					    </script>
+						
+					</div>				
+			
+					<div id="simpleTab2" class="container" style="height: 100%;">
+						<style type="text/css" media="screen">
+						
+						#tabs { margin-top: 1em; }
+						#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }
+						#add_tab { cursor: pointer; }
+						#dialog label, #dialog input { display:block; }
+						#dialog label { margin-top: 0.5em; }
+						#dialog input, #dialog textarea { width: 95%; }
+						
+						#selectable .ui-selecting { background: #007fff; }
+						#selectable .ui-selected { background: #355bd3; color: white; }
+						#selectable { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+						#selectable li { margin: 3px; padding: 0.4em; font-size: 1em;  }
+												  
+						</style>
+						<button class="ui-button ui-widget ui-corner-all" id="btn_newFile">New_File</button>
+						<button class="ui-button ui-widget ui-corner-all" id="btn_saveRun">Save_Run</button>
+						<button class="ui-button ui-widget ui-corner-all" id="btn_save">Save_File</button>
+						<button class="ui-button ui-widget ui-corner-all" id="btn_asSave">Save_File_AS</button>
+						
+						<div id="tabs"  >
+						  <ul>
+							<li class=""><a href="#tabs-1">unNamed.m</a> <span class="ui-icon ui-icon-close" id="close_1" role="presentation">pile</span></li>
+						  </ul>
+							
+						
+						  <div id="tabs-1">
+						  
+							<input type="hidden" class="selectCount" id="selectCount-0"/>
+							<textarea rows=20 id="tabArea" class="tabArea" style='width:99%;height:100;' class="mce-tinymce mce-panel"></textarea>
+						  </div>
+						</div>
+						
+
+					
+					<div id="fileInfor">
+											
+						<div style="width:100%;"><button style="width:100%;" id="FIdel" class="ui-button ui-corner-all ui-widget">delete_file</button></div>
+						<div style="width:100%;"><button style="width:100%;" id="FIrename" class="ui-button ui-corner-all ui-widget">rename_file</button></div>
+					
+					</div>
+				
+					<input type="hidden" id="fileInforName"value=""/>
+					<input type="hidden" id="fileReNameText" value=""/>
+			
+					
+					<div id="dialog" >
+							<fieldset class="ui-helper-reset">
+								<input type="text" name="tab_title" id="tab_title" value="Tab Title" class="ui-widget-content ui-corner-all" disabled="true"/>
+								<textarea name="tab_content" id="tab_content" class="ui-widget-content ui-corner-all"></textarea>
+							</fieldset>
+					</div>
+			
+			
+					<script>
+			
+			
+					
+					
+						$("#FIdel").click(function(){
+							
+							$( "#fileInfor" ).dialog( "close" );
+
+							swal({   
+									title: "Are you sure?"
+								,   text: "You will not be able to recover this file!"
+								,   type: "warning"
+								,   showCancelButton: true
+								,   confirmButtonColor: "#DD6B55"
+								,   confirmButtonText: "Yes, delete it!"
+								,   closeOnConfirm: false }
+								,	function(isConfirm){
+										
+										swal({			
+											title : "Deleted!"	
+										,	text : "Your imaginary file has been deleted."
+										,	type : "success"
+										,   showCancelButton: false
+										,   confirmButtonColor: "#0066ff"
+										,   confirmButtonText: "Confirm!"
+										,   closeOnConfirm: true }
+										,	function(){
+											delFile();
+										}); 
+										
+									});
+						});
+
+						
+						function delFile(){
+						
+								 $.ajax({
+								url: ajaxUrl + '/ajax/delFile',
+								dataType: 'json',
+								data :{
+									'fileName' : $("#fileInforName").val(),
+									'userId'   : '<%=sucessId %>',	
+								},
+								type: 'POST',
+								success: function(result) {	
+								
+									var fileNameArray = result['fileNames'];
+				
+										$( "#selectable li" ).remove();
+										
+										for(i=0; i< fileNameArray.length; i++){
+											$('#selectable').append('<li class="ui-widget-content" id="'+fileNameArray[i].replace(/.m/gi,"")+'">'+fileNameArray[i]+'</li>');
+										}
+	
+								}
+
+							});												
+						
+						}
+						
+						
+						$("#FIrename").click(function(){
+
+						
+							$( "#fileInfor" ).dialog( "close" );
+
+							swal({   
+								title: "ReName"
+							,   text: "Write something file name"
+							,   type: "input"
+							,   showCancelButton: true
+							,   closeOnConfirm: false
+							,   animation: "slide-from-top"
+							,   inputPlaceholder: $("#fileInforName").val() }
+							,	function(inputValue){
+
+									var reg_id = /^[a-z0-9_-]{4,12}$/; 
+									if (inputValue === false) return false;
+
+								
+									if(!reg_id.test(inputValue)){
+									
+										swal.showInputError("text long!!");
+										
+										return false 
+									}
+
+									$("#fileReNameText").val(inputValue);
+
+									swal({			
+											title : "Nice!"	
+										,	text : "File name has been changed to "+inputValue
+										,	type : "success"
+										,   showCancelButton: false
+										,   confirmButtonColor: "#0066ff"
+										,   confirmButtonText: "Confirm!"
+										,   closeOnConfirm: true }
+										,	function(){
+												RenameFile();
+										}); 
+								});
+
+						});		
+
+						
+						function RenameFile(){
+						
+							$.ajax({
+								url: ajaxUrl + "/ajax/renameFile",
+								dataType : 'json',
+								data : {
+									'fileName'  : $("#fileInforName").val(),
+									'userId'    : '<%=sucessId %>',	
+									'fileRename': $("#fileReNameText").val()
+								},
+								type : 'post',
+								success : function(result){ 
+								
+										var fileNameArray = result['fileNames'];
+					
+										$( "#selectable li" ).remove();
+										
+										for(i=0; i< fileNameArray.length; i++){
+											$('#selectable').append('<li class="ui-widget-content" id="'+fileNameArray[i].replace(/.m/gi,"")+'">'+fileNameArray[i]+'</li>');
+											
+										}
+											
+						
+									}
+								
+								});
+						
+							}
+						
+					</script>
+					
+					<input type="hidden" id="asSaveChk" value=""/>
+
+					</div>
+			
+				</div>
+
+			</div>
+			<div class="ui-layout-west" >
+			<div class="ui-layout-north">
+			<div class="ui-widget-header ui-corner-top">File Browser</div>
+			<div id="fileDiv" class="ui-widget-content" >
+			<script type="text/javascript">
+
+
+			$(document).bind("contextmenu", function(e){
+				return false;
+			});
+			
+			$(function(){
+			
+				$( "#fileInfor" ).dialog({autoOpen: false});
+
+				var fileNameArray = '<%=fileNames%>'.split(',');
+				
+				$("#tab_content").hide();
+				var tabs = $( "#tabs" ).tabs();
+					tabs.find( ".ui-tabs-nav" ).sortable({
+					  axis: "x",
+					  stop: function() {
+						tabs.tabs( "refresh" );
+					  }
+					});	
+
+				if(fileNameArray != ""){
+
+					for(i=0; i< fileNameArray.length; i++){
+						$('#selectable').append('<li class="ui-widget-content " id="'+fileNameArray[i].replace(/.m/gi,"")+'">'+fileNameArray[i]+'</li>');
+					}	
+				} 	
+			
+				var clickTabNum = 2;
+				
+				var tabTitle = $( "#tab_title" ),
+					tabContent = $( "#tab_content" ),
+					tabTemplate = "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close' id='close_"+clickTabNum+"' role='presentation'>Remove Tab</span></li>";
+
+				// Close icon: removing the tab on click
+				
+				<!-- var aaa= $("span.ui-icon-close").length; -->
+				
+				tabs.on( "click", "span.ui-icon-close", function() {
+				
+				  var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );
+				  $( "#" + panelId ).remove();
+				  tabs.tabs( "refresh" );
+				});
+			 
+				tabs.on( "keyup", function( event ) {
+				  if ( event.altKey && event.keyCode === $.ui.keyCode.BACKSPACE ) {
+					var panelId = tabs.find( ".ui-tabs-active" ).remove().attr( "aria-controls" );
+					$( "#" + panelId ).remove();
+					tabs.tabs( "refresh" );
+				  }
+				});
+				var selectCount = 1
+
+
+				$("#selectable").selectable({
+
+					stop:function(){		   
+
+						$( ".ui-selected", this ).each(function(e) {
+
+							
+							var fileString="";
+							var fileName = $(this).text();
+				
+							$( this ).mousedown(function(e) {
+								
+								if(e.which == 3){
+										
+									$("#fileInfor").dialog("open");
+									$("#fileInforName").val($(this).text());
+										
+								}
+							});				
+							
+							$( "#fileInfor" ).dialog({
+								title : fileName
+							,	height: "auto"
+							,	width: "auto"
+							,	modal: true
+							,	autoOpen: false
+							,   position: { 
+										my: 'left+140 top'
+									,	at: 'top'
+									,	of: $(this)
+								}
+
+							});
+							
+				
+							$('#innerTabs a[href="#simpleTab2"]').click();
+							
+							$.ajax({
+								url: ajaxUrl + '/ajax/file',
+						        dataType: 'json',
+						        type: 'POST',
+								async:false,
+						        data: {
+										'fileName':fileName,
+										'userId':'<%=sucessId %>'
+										},
+								success: function(result) {
+									
+									fileString = result['file'];
+
+								},error:function(request,status,error){
+									alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+								}
+							});
+							
+							var label = fileName || "Tab " + clickTabNum,
+								id = "tabs-" + clickTabNum,
+								li = $( tabTemplate.replace( /#\{href\}/g, "#" + id ).replace( /#\{label\}/g, label ) ),
+								tabContentHtml = fileString || "Tab " + clickTabNum + " content.";
+
+							var tabsText = $("#tabs a").text();
+							var tabsTextRe = tabsText.replace("unNamed.m","");	
+							var tabsTextArray = tabsTextRe.split(".m");
+								
+							var cloud = "";
+							
+							$.each( tabsTextArray, function( key, value ) {
+							
+								var fileNameRelpace = fileName.replace(".m","");
+								if(fileNameRelpace == value){
+									
+									cloud = "fileNameSame";
+									
+									return cloud
+
+								}
+
+								return cloud
+									
+							});
+								
+							if(cloud != "fileNameSame"){
+								
+								tabs.find( ".ui-tabs-nav" ).append( li );
+								tabs.append( "<div id='" + id + "'><textarea  style='width:99%;height:100;' rows=20 id=tabArea"+clickTabNum+" class='mce-tinymce mce-panel   tabArea'></textarea><input type='hidden' id='selectCount-"+selectCount+"' class='selectCount' /></div>" );
+								$('#selectCount-'+selectCount+'').val(selectCount);
+								
+								selectCount++;
+								tabs.tabs( "refresh" );
+								
+								var n = tabs.index(li);
+								tabs.tabs({ active:n });
+			
+							}else{
+								
+								$('#tabs a:contains("'+fileName+'")').click();
+							}
+								
+							
+							$('#tabArea'+clickTabNum).append(fileString);
+							
+							$('#'+id+'').trigger('focus');
+							
+							clickTabNum++;
+							
+						});
+						
+					}
+				
+				});
+					
+			
+				$("tr#info td").click(function(){ //function_td 
+				  $(this).css("font-weight","bold"); 
+				}); 
+
+				
+				$( "#btn_save" ).on( "click", function() {
+				
+					var selectTabName = $('#tabs .ui-tabs-tab[aria-selected="true"] a').html();
+					var selectTabContent = $('#tabs .ui-corner-bottom[aria-hidden="false"] textarea').val();
+					
+					$("#tab_title").val(selectTabName.replace(".m",""));
+					$("#tab_content").val(selectTabContent);
+					
+					swal({   
+							title: "saveFile"
+						,   text: "Would you like to save this file?"
+						,   type: "info"
+						,   showCancelButton: true
+						,   closeOnConfirm: false
+						,   animation: "slide-from-top" }
+						,	function(){
+									saveFile();
+							});
+
+				});
+				
+				$( "#btn_asSave" ).on( "click", function() {
+					
+					var selectTabName = $('#tabs .ui-tabs-tab[aria-selected="true"] a').html();
+					var selectTabContent = $('#tabs .ui-corner-bottom[aria-hidden="false"] textarea').val();
+					
+					$("#tab_title").attr("disabled",false);
+					
+					$("#asSaveChk").val("chk");
+
+					swal({   
+							title: "Save as File"
+						,   text: "Would you like to save this file?"
+						,   type: "input"
+						,   showCancelButton: true
+						,   closeOnConfirm: false
+						,   animation: "slide-from-top"
+						,   inputPlaceholder:selectTabName}
+						,	function(inputValue){
+
+								var reg_id = /^[a-z0-9_-]{4,12}$/; 
+								if (inputValue === false) return false;
+
+							
+								if(!reg_id.test(inputValue)){
+								
+									swal.showInputError("text long!!");
+									
+									
+									return false 
+								}
+		
+								$("#tab_title").val(inputValue);
+								
+								saveFileAs();
+								
+							});
+
+
+
+
+					
+					$("#tab_title").val(selectTabName.replace(/.m/gi,""));
+					$("#tab_content").val(selectTabContent);
+					
+				
+				});
+
+
+				function saveFile(){
+					
+					var fileName =  $("#tab_title").val();
+					var fileContents = $("#tab_content").val();
+
+					if(fileName !=""  ){
+						<!-- if(fileName.replace(/\s/g,"").length == 0){ -->
+							if(fileContents !=""){
+								$.ajax({
+						            url: ajaxUrl + '/editorFile/save',
+						            dataType: 'json',
+						            type: 'POST',
+						            data: { 
+											'fileName':fileName,
+											'contents':fileContents,
+											'userId':'<%= sucessId %>'
+										   },
+									success: function(result) {	
+													<!-- if(asSaveChk !=  ""){$("#asSaveChk").val("");} --
+													
+													swal({			
+														title : "Nice!"	
+													,	text : "file success!!!"
+													,	type : "success"
+													,   showCancelButton: false
+													,   confirmButtonColor: "#0066ff"
+													,   confirmButtonText: "Confirm!"
+													,   closeOnConfirm: true }
+													,	function(){
+															var fileNameArray = result['fileNames'];
+			
+															$( "#selectable li" ).remove();
+
+															for(i=0; i< fileNameArray.length; i++){
+																$('#selectable').append('<li class="ui-widget-content" id="'+fileNameArray[i].replace(/.m/gi,"")+'">'+fileNameArray[i]+'</li>');
+															}	
+															
+															
+													}); 
+
+												$('#innerTabs a[href="#simpleTab2"]').click();
+											}
+						        	});
+							}else{
+								sweetAlert("Oops...", "There is no file contents", "error");
+							}
+					}else{
+						sweetAlert("Oops...", "The file name null must not be.", "error");
+					}	
+				}	
+			
+				
+				
+				function saveFileAs(){
+					
+					var fileName =  $("#tab_title").val();
+					var fileContents = $("#tab_content").val();
+					
+					var asSaveChk = $("#asSaveChk").val
+					
+					if(fileName !=""){
+						<!-- if(fileName.replace(/\s/g,"").length == 0){ -->
+							if(fileContents !=""){
+								$.ajax({
+						            url: ajaxUrl + '/editorFile/saveAs'
+							    ,   dataType: 'json'
+						        ,   type: 'POST'
+						        ,   data: { 
+											'fileName':fileName
+										,	'contents':fileContents
+										,	'userId':'<%= sucessId %>'
+										   }
+								,	success: function(result) {	
+													<!-- if(asSaveChk !=  ""){$("#asSaveChk").val("");} -->
+												
+												if(result['err']){
+													sweetAlert("Oops...", "this file is exists!", "error");
+												}else{
+													
+													swal({			
+														title : "Nice!"	
+													,	text : "file success!!!"
+													,	type : "success"
+													,   showCancelButton: false
+													,   confirmButtonColor: "#0066ff"
+													,   confirmButtonText: "Confirm!"
+													,   closeOnConfirm: true }
+													,	function(){
+		
+															var fileNameArray = result['fileNames'];
+			
+															$( "#selectable li" ).remove();
+															
+															for(i=0; i< fileNameArray.length; i++){
+																$('#selectable').append('<li class="ui-widget-content" id="'+fileNameArray[i].replace(/.m/gi,"")+'">'+fileNameArray[i]+'</li>');
+															}	
+														});
+														
+													}
+													$('#innerTabs a[href="#simpleTab2"]').click();
+												}
+											
+											});
+											
+						        
+							}else{
+								sweetAlert("Oops...", "There is no file contents", "error");
+							}
+					}else{
+						sweetAlert("Oops...", "The file name null must not be.", "error");
+					}	
+				}	
+
+				$("#btn_newFile").click(function(){
+						
+								
+					var label = "unNamed.m" || "Tab " + clickTabNum,
+								id = "tabs-" + clickTabNum,
+								li = $( tabTemplate.replace( /#\{href\}/g, "#" + id ).replace( /#\{label\}/g, label ) ),
+								tabContentHtml = "" || "Tab " + clickTabNum + " content.";
+				
+						
+							tabs.find( ".ui-tabs-nav" ).append( li );
+							tabs.append( "<div id='" + id + "'><textarea  style='width:99%;height:100;' rows=20 id=tabArea"+clickTabNum+" class='mce-tinymce mce-panel tabArea'></textarea></div>" );
+			
+							tabs.tabs( "refresh" );
+					
+							$('#tabArea'+clickTabNum).append("");
+								
+							$('#'+id+'').trigger('focus');
+							
+							//tab select
+							var n = tabs.index(li);
+							tabs.tabs({active: n });
+				
+							clickTabNum++;
+			
+					});
+
+			});
+			
+				$("#btn_saveRun").click( function(){
+		
+					var fileName =  $('#tabs .ui-tabs-tab[aria-selected="true"] a').html();
+					var fileContents = $('#tabs .ui-corner-bottom[aria-hidden="false"] textarea').val();
+					
+		
+
+					if(fileName !="" ){
+						if(fileContents !=""){
+						$.ajax({
+				            url: ajaxUrl + '/ajax/fileEditor',
+				            dataType: 'json',
+				            type: 'POST',
+
+				            data: {'fileName':fileName,
+								   'contents':fileContents,
+								   'userId':'<%= sucessId %>'
+								   },
+							success: function(result) {	
+						
+										var readFile = result['ReadFile'];
+										var errMas = result['errMas'];
+										
+										swal("Good job!", "success file", "success");
+										$('#cmd_board').append('\n'+readFile+errMas);
+										
+										$('#innerTabs a[href="#simpleTab1"]').click();
+										$('#cmd_board').scrollTop($('#cmd_board')[0].scrollHeight);
+										
+										var fileNameArray = result['fileNames'];
+										
+										$( "#selectable li" ).remove();
+											for(i=0; i< fileNameArray.length; i++){
+												$('#selectable').append('<li class="ui-widget-content" id="'+fileNameArray[i].replace(/.m/gi,"")+'">'+fileNameArray[i]+'</li>');
+											}	
+										
+									}
+					         });
+						}else{
+							sweetAlert("Oops...", "There is no file contents", "error");
+						}
+					}else{
+						<!-- alert("There is no file name"); -->
+						sweetAlert("Oops...", "There is no file name", "error");
+					}
+			
+				});
+					
+			
+					
+				$( "#dialog" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					autoOpen: false
+				});
+		
+			</script>
+			
+			
+			<ol id="selectable"></ol>	
+			
+	</div>
+
+</div>
+<!-- <div class="ui-layout-center">
+	<div class="ui-widget-header ui-corner-top">Workspace</div>
+	<div class="ui-widget-content">
+		<li>작업 환경</li>
+		<table class="table table-striped" id="workSpaceTable" style="bolder:1px solid ">
+			<tr>
+				<td>Name</td><td>Class</td><td>Dimension</td><td>Values</td><td>Attribute</td>
+			</tr>
+			<tbody>
+				
+			</tbody>
+		</table>
+		
+	</div>
+
+</div>
+ -->
+<div class="ui-layout-center" >
+	<div class="ui-widget-header ui-corner-top">Command History</div>
+	<div class="ui-widget-content"  id="commandHistoryDiv">
+		<!-- <li id="workrecodingLi">작업 기록</li> -->
+		<table class="table table-striped" id="commandHistoryTable" width="100%">
+			<tbody>
+						 <% for(var i=0; i<CHistory.length; i++) {%>
+						<tr>
+						 <td class="historyTd"><%= CHistory[i].CHistoryLog %></td>
+						 <td style="float:right"><%= new Date(CHistory[i].CHistoryTime).getFullYear()%>-<%= new Date(CHistory[i].CHistoryTime).getMonth()+1 %>-<%= new Date(CHistory[i].CHistoryTime).getDate() %></td>
+						</tr>
+						<% } %>		
+			</tbody>
+		</table>
+		
+		<script>
+		
+		$(function(){
+		
+			hsClick();
+			hsHober();
+		});
+			function hsHober(){
+				$( ".historyTd" ).hover(
+					function(){
+						$( this ).css('font-weight', 'bold');
+					},function(){
+						$( this ).css('font-weight', 'normal');
+					}
+				);
+			}
+		
+			function hsClick(){
+			
+			
+				$(".historyTd").click(function(){
+				
+					var msg = $(this).text();
+					  
+					  var date  = new Date();
+					  var year  = date.getFullYear();
+					  var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+					  var day   = date.getDate();							  
+					  var time  = date.toLocaleTimeString();
+
+					  
+					  
+			          $.ajax({
+			              url: ajaxUrl + '/ajax',
+			              dataType: 'json',
+			              type: 'POST',
+			              data: {'msg':msg,
+								 'diary':'diary on',
+								  'off':'diary off',
+								  'sucessId':'<%= sucessId%>',
+								  'time':year+'-'+month+'-'+day
+								 },
+								
+								
+			              		success: function(result) {
+										
+							           $.ajax({
+							              url: ajaxUrl + '/diary1',
+							              dataType: 'json',
+							              type: 'POST',
+							              success: function(result) {
+
+												var fWriter = result['fWriter'];
+												<!-- alert(fWriter); -->
+												
+												 $.ajax({
+										              url: ajaxUrl + '/diary2',
+										              dataType: 'json',
+										              type: 'POST',
+										              success: function(result) {	
+															
+															var fWriter = result['fWriter'];
+															
+															fWriter = fWriter.replace(/ diary off/gi,"");
+															fWriter = fWriter.replace(/octave-cli:/gi,"");
+															fWriter = fWriter.replace(/[1-9][0-9][0-9][0-9]>|[1-9][0-9][0-9]>|[1-9][0-9]>|[0-9]>/gi,"");
+															fWriter = fWriter.replace(msg,"");
+															
+															$('#cmd_board').scrollTop(0);
+															$('#cmd_board').append(fWriter);	
+															$('#cmd_board').scrollTop($('#cmd_board')[0].scrollHeight);		
+															
+															$('#innerTabs a[href="#simpleTab1"]').click();
+										              	}
+										
+													});													
+
+							              	},
+											error:function(request,status,error){
+											alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+											}
+							
+										});
+			
+								},error:function(request,status,error){
+											alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+									}
+						
+			          	});
+
+					});	
+				}	
+		</script>
+		
+	</div>
+	
+</div>
+			</div>
+		</div><!-- /#tab3 -->
+
+	</div><!-- /#tabpanels -->
+
+</div><!-- /#outer-center -->
+
+</body>
+</html>

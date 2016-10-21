@@ -1,0 +1,34 @@
+
+> octaveTest@0.0.0 start /home/tshong/test/work/octaveTest2
+> node ./bin/www
+
+Created newdir
+events.js:154
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: EBADF: bad file descriptor, read
+    at Error (native)
+
+npm ERR! Linux 3.10.0-327.el7.x86_64
+npm ERR! argv "/data/application/node-v5.9.0-linux-x64/bin/node" "/data/application/node-v5.9.0-linux-x64/bin/npm" "start"
+npm ERR! node v5.9.0
+npm ERR! npm  v3.7.3
+npm ERR! code ELIFECYCLE
+npm ERR! octaveTest@0.0.0 start: `node ./bin/www`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the octaveTest@0.0.0 start script 'node ./bin/www'.
+npm ERR! Make sure you have the latest version of node.js and npm installed.
+npm ERR! If you do, this is most likely a problem with the octaveTest package,
+npm ERR! not with npm itself.
+npm ERR! Tell the author that this fails on your system:
+npm ERR!     node ./bin/www
+npm ERR! You can get information on how to open an issue for this project with:
+npm ERR!     npm bugs octaveTest
+npm ERR! Or if that isn't available, you can get their info via:
+npm ERR!     npm owner ls octaveTest
+npm ERR! There is likely additional logging output above.
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /home/tshong/test/work/octaveTest2/npm-debug.log
